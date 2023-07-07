@@ -4,8 +4,23 @@
 $folderPath = "E:\Wallpapers\Static\"
 $wallpaperExtensions = @("*.jpg", "*.png", "*.gif", "*.jpeg", "*.bmp", "*.tiff")
 
-# Get all wallpaper files in the folder
+# If the folder does not exist, stop script execution
+if (-not (Test-Path -Path $folderPath))
+{
+    Write-Host "Folder does not exist!" -ForegroundColor Red
+    Exit 1
+}
+
+# Get all wallpaper files and its count
 $wallpaperFiles = Get-ChildItem -Path $folderPath -Depth 1 -File -Include $wallpaperExtensions
+$wallpapersCount = $wallpaperFiles.Count
+
+# If the folder does not contain wallpapers, stop script execution
+if ($wallpapersCount -eq 0)
+{
+    Write-Host "The folder does not contain a wallpaper!" -ForegroundColor Red
+    Exit 1
+}
 
 # Get the random wallpaper file path
 $randomIndex = Get-Random -Minimum 0 -Maximum $wallpaperFiles.Count

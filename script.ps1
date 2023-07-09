@@ -26,16 +26,24 @@ if ($wallpapersCount -eq 0)
 $randomIndex = Get-Random -Minimum 0 -Maximum $wallpaperFiles.Count
 $randomWallpaperPath = $wallpaperFiles[$randomIndex].FullName
 
-# Load the User32.dll library and define the Wallpaper class with the SystemParametersInfo method
-Add-Type -TypeDefinition @"
-using System;
-using System.Runtime.InteropServices;
+try
+{
+    # Load the User32.dll library and define the Wallpaper class with the SystemParametersInfo method
+    Add-Type -TypeDefinition @"
+    using System;
+    using System.Runtime.InteropServices;
     
-public class Wallpaper {
-    [DllImport("user32.dll", CharSet=CharSet.Auto)]
-    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
-}
+    public class Wallpaper {
+        [DllImport("user32.dll", CharSet=CharSet.Auto)]
+        public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
+    }
 "@
 
-# Set the random wallpaper as the desktop background
-[Wallpaper]::SystemParametersInfo(20, 0, $randomWallpaperPath, 3)
+    # Set the random wallpaper as the desktop background
+    [Wallpaper]::SystemParametersInfo(20, 0, $randomWallpaperPath, 3)
+}
+catch
+{
+    Write-Host $_.Exception.Message -ForegroundColor Red
+    Exit 1
+}
